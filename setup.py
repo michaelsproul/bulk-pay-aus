@@ -9,8 +9,8 @@ config = {
     'url': 'https://sproul.xyz',
     'version': '0.1',
     'install_requires': ['aba', 'Flask'],
-    'packages': ['bulk_pay'],
-    'name': 'bulk_pay'
+    'packages': ['bulkpay'],
+    'name': 'bulkpay'
 }
 
 setup(**config)

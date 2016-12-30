@@ -3,8 +3,10 @@ import io
 from flask import Flask, request, redirect, url_for, Response
 
 from .csv_parse import convert_csv_to_aba
+from .util import MissingFields, get_form_fields
 
 app = Flask(__name__)
+# app.debug = True
 
 BAD_REQUEST = 400
 
@@ -24,10 +26,12 @@ def csv_to_aba():
             return "No file selected", BAD_REQUEST
 
         # Grab the other form parameters
-        sender_name = request.form["sender_name"]
-        sender_account = request.form["sender_account"]
-        sender_bsb = request.form["sender_bsb"]
-        sender_bank = request.form["sender_bank"]
+        try:
+            [sender_name, sender_account, sender_bsb, sender_bank] = get_form_fields(request, [
+                "sender_name", "sender_account", "sender_bsb", "sender_bank"
+            ])
+        except MissingFields as ex:
+            return ex.message, BAD_REQUEST
 
         # Convert uploaded byte-stream to a Python string (not very efficient, but hey).
         csv_stream = io.StringIO(csv_file.read().decode("utf-8"))
