@@ -9,6 +9,12 @@ def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender
     reader = csv.reader(csv_data)
     records = []
     for [bsb, account_num, name, amount] in reader:
+        print("Processing {}, {}, {}, {}".format(bsb, account_num, name, amount))
+
+        if len(name) > 32:
+            print("WARNING: truncating name: {}".format(name))
+            name = name[:32]
+
         rec = aba.records.DetailRecord(
             bsb=bsb,
             account_number=account_num,
@@ -20,6 +26,14 @@ def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender
             sender_account=sender_account,
             remitter_name=sender_name
         )
+
+        # Validate the record.
+        try:
+            rec.render_to_string()
+        except aba.exceptions.ValidationError:
+            # TODO: propagate this error
+            print("Record not valid: {}, {}, {}, {}".format(bsb, account_num, name, amount))
+
         records.append(rec)
 
     header = aba.records.DescriptiveRecord(

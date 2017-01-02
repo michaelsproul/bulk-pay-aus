@@ -34,7 +34,7 @@ def csv_to_aba():
             return ex.message, BAD_REQUEST
 
         # Convert uploaded byte-stream to a Python string (not very efficient, but hey).
-        csv_stream = io.StringIO(csv_file.read().decode("utf-8"))
+        csv_stream = io.StringIO(csv_file.read().decode("utf-8-sig"))
 
         result = convert_csv_to_aba(
             csv_stream,
