@@ -2,18 +2,24 @@ import csv
 import aba.records
 from datetime import datetime
 from aba.generator import AbaFile
+from aba.fields import RemitterName, PayeeName
 
 # headers: bsb, account number, name, amount in cents, comment
 def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender_bank,
                        batch_description="", txn_reference=""):
     reader = csv.reader(csv_data)
     records = []
+
+    # TODO: tell the user if their name is truncated
+    sender_name = sender_name[:RemitterName.length]
+
     for [bsb, account_num, name, amount] in reader:
         print("Processing {}, {}, {}, {}".format(bsb, account_num, name, amount))
 
-        if len(name) > 32:
+        # TODO: tell the user
+        if len(name) > PayeeName.length:
             print("WARNING: truncating name: {}".format(name))
-            name = name[:32]
+            name = name[:PayeeName.length]
 
         rec = aba.records.DetailRecord(
             bsb=bsb,
