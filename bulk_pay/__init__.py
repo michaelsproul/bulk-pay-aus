@@ -27,9 +27,11 @@ def csv_to_aba():
 
         # Grab the other form parameters
         try:
-            [sender_name, sender_account, sender_bsb, sender_bank] = get_form_fields(request, [
-                "sender_name", "sender_account", "sender_bsb", "sender_bank"
+            fields = get_form_fields(request, [
+                    "sender_name", "sender_account", "sender_bsb", "sender_bank",
+                    "batch_description"
             ])
+            [sender_name, sender_account, sender_bsb, sender_bank, batch_description] = fields
         except MissingFields as ex:
             return ex.message, BAD_REQUEST
 
@@ -39,7 +41,8 @@ def csv_to_aba():
         result = convert_csv_to_aba(
             csv_stream,
             sender_name=sender_name, sender_account=sender_account,
-            sender_bsb=sender_bsb, sender_bank=sender_bank
+            sender_bsb=sender_bsb, sender_bank=sender_bank,
+            batch_description=batch_description
         )
 
         # Use the uploaded file's name with an ABA extension for the result.
@@ -64,6 +67,8 @@ def csv_to_aba():
         <input type=text name="sender_bsb"><br>
         Your 3 Letter Bank Code, e.g. BEN
         <input type=text name="sender_bank"><br>
+        Description for your transactions
+        <input type=text name="batch_description"><br>
         CSV file to convert
         <input type=file name="csv_file"><br>
         <input type=submit value=Convert>

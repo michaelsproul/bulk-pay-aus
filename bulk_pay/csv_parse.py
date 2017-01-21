@@ -6,14 +6,14 @@ from aba.fields import RemitterName, PayeeName
 
 # headers: bsb, account number, name, amount in cents, comment
 def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender_bank,
-                       batch_description="", txn_reference=""):
+                       batch_description=""):
     reader = csv.reader(csv_data)
     records = []
 
     # TODO: tell the user if their name is truncated
     sender_name = sender_name[:RemitterName.length]
 
-    for [bsb, account_num, name, amount] in reader:
+    for [bsb, account_num, name, amount, txn_reference] in reader:
         print("Processing {}, {}, {}, {}".format(bsb, account_num, name, amount))
 
         # TODO: tell the user
