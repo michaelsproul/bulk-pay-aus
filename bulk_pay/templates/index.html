@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+  <title>CSV to ABA</title>
+  <link rel="stylesheet" type="text/css" href="static/style.css">
+</head>
+<body>
+<h1>Convert CSV to ABA</h1>
+<form method="post" enctype="multipart/form-data">
+  <p>
+    Your Name
+    <input type="text" name="sender_name"><br>
+    Your Account Number
+    <input type="text" name="sender_account"><br>
+    Your BSB (xxx-xxx)
+    <input type="text" name="sender_bsb"><br>
+    Your 3 Letter Bank Code, e.g. BEN
+    <input type="text" name="sender_bank"><br>
+    Description for your transactions
+    <input type="text" name="batch_description"><br>
+    CSV file to convert
+    <input type="file" name="csv_file"><br>
+    <input type="submit" value="Convert">
+  </p>
+</form>
+</body>
+</html>

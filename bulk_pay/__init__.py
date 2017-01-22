@@ -1,6 +1,6 @@
 import os
 import io
-from flask import Flask, request, redirect, url_for, Response
+from flask import Flask, request, redirect, url_for, Response, render_template
 
 from .csv_parse import convert_csv_to_aba
 from .util import MissingFields, get_form_fields
@@ -12,7 +12,7 @@ BAD_REQUEST = 400
 
 FILE_FIELD = 'csv_file'
 
-@app.route("/csv_to_aba", methods=['GET', 'POST'])
+@app.route("/", methods=['GET', 'POST'])
 def csv_to_aba():
     if request.method == 'POST':
         # Check if the post request has the file part
@@ -53,25 +53,4 @@ def csv_to_aba():
         response.headers["Content-Disposition"] = 'attachment; filename="{}"'.format(result_filename)
         return response
 
-    return '''
-    <!doctype html>
-    <title>CSV to ABA</title>
-    <h1>Convert CSV to ABA</h1>
-    <form method=post enctype=multipart/form-data>
-      <p>
-        Your Name
-        <input type=text name="sender_name"><br>
-        Your Account Number
-        <input type=text name="sender_account"><br>
-        Your BSB (xxx-xxx)
-        <input type=text name="sender_bsb"><br>
-        Your 3 Letter Bank Code, e.g. BEN
-        <input type=text name="sender_bank"><br>
-        Description for your transactions
-        <input type=text name="batch_description"><br>
-        CSV file to convert
-        <input type=file name="csv_file"><br>
-        <input type=submit value=Convert>
-      </p>
-    </form>
-    '''
+    return render_template("index.html")
