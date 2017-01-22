@@ -9,15 +9,21 @@
 <form method="post" enctype="multipart/form-data">
   <p>
     Your Name
-    <input type="text" name="sender_name"><br>
+    <input type="text" name="sender_name" maxlength="{{limits.sender_name}}"
+           placeholder="Jane Smith"
+    /><br>
     Your Account Number
-    <input type="text" name="sender_account"><br>
-    Your BSB (xxx-xxx)
-    <input type="text" name="sender_bsb"><br>
-    Your 3 Letter Bank Code, e.g. BEN
-    <input type="text" name="sender_bank"><br>
+    <input type="text" name="sender_account" maxlength="{{limits.account_num}}"
+           pattern="[0-9]{8}[0-9]?" placeholder="12345678"
+    /><br>
+    Your BSB
+    <input type="text" name="sender_bsb" maxlength="{{limits.bsb}}"
+           pattern="[0-9]{3}-[0-9]{3}" placeholder="123-456"
+    /><br>
+    Your 3 Letter Bank Code
+    <input type="text" name="sender_bank" maxlength="{{limits.bank_code}}" placeholder="BEN"><br>
     Description for your transactions
-    <input type="text" name="batch_description"><br>
+    <input type="text" name="batch_description" maxlength="{{limits.description}}"><br>
     CSV file to convert
     <input type="file" name="csv_file"><br>
     <input type="submit" value="Convert">

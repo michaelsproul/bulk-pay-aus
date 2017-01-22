@@ -4,6 +4,16 @@ from datetime import datetime
 from aba.generator import AbaFile
 from aba.fields import RemitterName, PayeeName
 
+class ValidationError(Exception):
+    def __init__(self, message):
+        self.message = message
+
+def validate_record(rec, message):
+    try:
+        rec.render_to_string()
+    except aba.exceptions.ValidationError:
+        raise ValidationError(message)
+
 # headers: bsb, account number, name, amount in cents, comment
 def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender_bank,
                        batch_description=""):
@@ -34,11 +44,9 @@ def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender
         )
 
         # Validate the record.
-        try:
-            rec.render_to_string()
-        except aba.exceptions.ValidationError:
-            # TODO: propagate this error
-            print("Record not valid: {}, {}, {}, {}".format(bsb, account_num, name, amount))
+        validate_record(
+            rec, "Record not valid: {}, {}, {}, {}".format(bsb, account_num, name, amount)
+        )
 
         records.append(rec)
 
@@ -50,8 +58,13 @@ def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender
         date=datetime.now().date()
     )
 
+    validate_record(header, "Header not valid")
+
     aba_file = AbaFile(header)
     for record in records:
         aba_file.add_record(record)
 
-    return aba_file.render_to_string()
+    try:
+        return aba_file.render_to_string()
+    except aba.exceptions.ValidationError:
+        raise ValidationError("Unable to create ABA file")
