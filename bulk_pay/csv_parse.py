@@ -2,7 +2,7 @@ import csv
 import aba.records
 from datetime import datetime
 from aba.generator import AbaFile
-from aba.fields import RemitterName, PayeeName
+from aba.fields import RemitterName, PayeeName, LodgmentRef
 
 class ValidationError(Exception):
     def __init__(self, message):
@@ -20,16 +20,27 @@ def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender
     reader = csv.reader(csv_data)
     records = []
 
-    # TODO: tell the user if their name is truncated
     sender_name = sender_name[:RemitterName.length]
 
-    for [bsb, account_num, name, amount, txn_reference] in reader:
-        print("Processing {}, {}, {}, {}".format(bsb, account_num, name, amount))
+    for row in reader:
+        if len(row) != 5:
+            raise ValidationError("Wrong number of columns in row: {}, expected 5".format(row))
+        [bsb, account_num, name, amount, txn_reference] = row
 
-        # TODO: tell the user
-        if len(name) > PayeeName.length:
-            print("WARNING: truncating name: {}".format(name))
-            name = name[:PayeeName.length]
+        print("Processing {}".format(row))
+
+        # Truncate the recipient name
+        # TODO: add "strict" mode to fail upon truncation
+        name = name[:PayeeName.length]
+
+        # Fail if the transaction reference is too long
+        # TODO: maybe add an option to truncate
+        if len(txn_reference) > LodgmentRef.length:
+            raise ValidationError(
+                "Transaction reference is too long: {}, length is {}, max length is {}".format(
+                    repr(txn_reference), len(txn_reference), LodgmentRef.length
+                )
+            )
 
         rec = aba.records.DetailRecord(
             bsb=bsb,
@@ -44,9 +55,7 @@ def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender
         )
 
         # Validate the record.
-        validate_record(
-            rec, "Record not valid: {}, {}, {}, {}".format(bsb, account_num, name, amount)
-        )
+        validate_record(rec, "Record not valid: {}".format(row))
 
         records.append(rec)
 
@@ -58,7 +67,11 @@ def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender
         date=datetime.now().date()
     )
 
-    validate_record(header, "Header not valid")
+    validate_record(
+        header, "Sender information not valid, name: {}, bank: {}, description: {}".format(
+            sender_name, sender_bank, batch_description
+        )
+    )
 
     aba_file = AbaFile(header)
     for record in records:
@@ -67,4 +80,4 @@ def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender
     try:
         return aba_file.render_to_string()
     except aba.exceptions.ValidationError:
-        raise ValidationError("Unable to create ABA file")
+        raise ValidationError("Unable to format records into ABA file")

@@ -1,33 +1,83 @@
 <!doctype html>
 <html>
 <head>
+  <meta charset="utf-8">
   <title>CSV to ABA</title>
   <link rel="stylesheet" type="text/css" href="static/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
 </head>
 <body>
-<h1>Convert CSV to ABA</h1>
-<form method="post" enctype="multipart/form-data">
-  <p>
-    Your Name
-    <input type="text" name="sender_name" maxlength="{{limits.sender_name}}"
-           placeholder="Jane Smith"
-    /><br>
-    Your Account Number
-    <input type="text" name="sender_account" maxlength="{{limits.account_num}}"
-           pattern="[0-9]{8}[0-9]?" placeholder="12345678"
-    /><br>
-    Your BSB
-    <input type="text" name="sender_bsb" maxlength="{{limits.bsb}}"
-           pattern="[0-9]{3}-[0-9]{3}" placeholder="123-456"
-    /><br>
-    Your 3 Letter Bank Code
-    <input type="text" name="sender_bank" maxlength="{{limits.bank_code}}" placeholder="BEN"><br>
-    Description for your transactions
-    <input type="text" name="batch_description" maxlength="{{limits.description}}"><br>
-    CSV file to convert
-    <input type="file" name="csv_file"><br>
-    <input type="submit" value="Convert">
-  </p>
+<h1 id="title">Convert CSV to ABA</h1>
+<div id="content">
+<div id="converter" style="display: block; width: 475px; margin-left: auto; margin-right: auto">
+<form method="post" enctype="multipart/form-data" class="pure-form pure-form-aligned">
+  <fieldset>
+    <div class="pure-control-group">
+      <label for="sender_name">Your Name</label>
+      <input type="text" name="sender_name" maxlength="{{limits.sender_name}}"
+             placeholder="Jane Citizen" required>
+    </div>
+
+    <div class="pure-control-group">
+      <label for="sender_account">Your Account Number</label>
+      <input type="text" name="sender_account" maxlength="{{limits.account_num}}"
+             pattern="[0-9]{8}[0-9]?" placeholder="12345678">
+    </div>
+
+    <div class="pure-control-group">
+      <label for="sender_bsb">Your BSB</label>
+      <input type="text" name="sender_bsb" maxlength="{{limits.bsb}}"
+             pattern="[0-9]{3}-[0-9]{3}" placeholder="123-456">
+    </div>
+
+    <div class="pure-control-group">
+      <label for="sender_bank">Your 3 Letter Bank Code</label>
+      <input type="text" name="sender_bank" maxlength="{{limits.bank_code}}"
+             placeholder="BEN" required>
+    </div>
+
+    <div class="pure-control-group">
+      <label for="batch_description">Description for your transactions</label>
+      <input type="text" name="batch_description" maxlength="{{limits.description}}" required>
+    </div>
+
+    <div class="pure-control-group">
+      <label for="csv_file">CSV file to convert</label>
+      <input type="file" name="csv_file">
+    </div>
+
+    <div class="pure-controls">
+      <button type="submit" class="pure-button pure-button-primary">Convert</button>
+    </div>
+  </fieldset>
 </form>
+</div><!-- converter -->
+
+<h2>What is this?</h2>
+<p>This webpage helps you pay multiple people using bank transfers from a standard Australian
+bank account.</p>
+<p>It does this by converting a list of transactions in a CSV file into an ABA
+file that you can upload to your bank.</p>
+
+<h2>How do I use it?</h2>
+<p>First, you need to create the list of transactions as a CSV file.
+Most spreadsheet software (e.g. Excel, Google Sheets) can save a spreadsheet to CSV.
+To work with this tool, your CSV file needs 5 columns:</p>
+<ol>
+  <li>Recipient BSB, formatted with a dash, e.g. 123-456</li>
+  <li>Recipient account number</li>
+  <li>Recipient name</li>
+  <li>Amount in <b>cents</b> to pay to this recipient</li>
+  <li>Transaction reference - some text that the recipient will see</li>
+</ol>
+<p>You also have to watch out for length limits, the transaction reference can be
+<b>at most 18 characters</b> and the recipient name can be <b>at most 12 characters</b>.
+Download an example CSV file below to get started!</p>
+<a class="pure-button" href="static/example.csv">Download Example CSV</a>
+<h2>Source Code, Bugs, Credits, etc</h2>
+<p>You can get a copy of the source and report bugs at
+  <a href="https://github.com/michaelsproul/bulk-pay-aus">github.com/michaelsproul/bulk-pay-aus</a>.
+</p>
+</div><!-- #content -->
 </body>
 </html>

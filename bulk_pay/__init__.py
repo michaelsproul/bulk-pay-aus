@@ -4,7 +4,7 @@ import flask
 from aba.fields import AccountNumber, BSB, Description, RemitterName, UserBank
 from flask import Flask, request, redirect, url_for, Response, render_template
 
-from .csv_parse import convert_csv_to_aba
+from .csv_parse import convert_csv_to_aba, ValidationError
 from .util import MissingFields, get_form_fields
 
 app = Flask(__name__)
@@ -49,12 +49,15 @@ def csv_to_aba():
         # Convert uploaded byte-stream to a Python string (not very efficient, but hey).
         csv_stream = io.StringIO(csv_file.read().decode("utf-8-sig"))
 
-        result = convert_csv_to_aba(
-            csv_stream,
-            sender_name=sender_name, sender_account=sender_account,
-            sender_bsb=sender_bsb, sender_bank=sender_bank,
-            batch_description=batch_description
-        )
+        try:
+            result = convert_csv_to_aba(
+                csv_stream,
+                sender_name=sender_name, sender_account=sender_account,
+                sender_bsb=sender_bsb, sender_bank=sender_bank,
+                batch_description=batch_description
+            )
+        except ValidationError as ex:
+            return error(ex.message)
 
         # Use the uploaded file's name with an ABA extension for the result.
         basename, _ = os.path.splitext(csv_file.filename)
