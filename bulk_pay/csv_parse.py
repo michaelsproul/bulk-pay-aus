@@ -14,13 +14,31 @@ def validate_record(rec, message):
     except aba.exceptions.ValidationError:
         raise ValidationError(message)
 
+def check_field(field_name, field_value, length_limit, strict):
+    """Check that a field's value fits within the length limit. Return the updated field value.
+
+    In strict mode, an exception will be raised if the field is too long.
+    In non-strict mode, the field will be truncated.
+    """
+    if strict:
+        if len(field_value) > length_limit:
+            raise ValidationError(
+                "{} is too long: {}, length is {}, max length is {}".format(
+                    field_name, repr(field_value), len(field_value), length_limit
+                )
+            )
+        else:
+            return field_value
+
+    return field_value[:length_limit]
+
 # headers: bsb, account number, name, amount in cents, comment
 def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender_bank,
-                       batch_description=""):
+                       batch_description="", strict=True):
     reader = csv.reader(csv_data)
     records = []
 
-    sender_name = sender_name[:RemitterName.length]
+    sender_name = check_field("Sender name", sender_name, RemitterName.length, strict)
 
     for row in reader:
         if len(row) != 5:
@@ -29,18 +47,12 @@ def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender
 
         print("Processing {}".format(row))
 
-        # Truncate the recipient name
-        # TODO: add "strict" mode to fail upon truncation
-        name = name[:PayeeName.length]
+        # Check/truncate the recipient name
+        name = check_field("Recipient name", name, PayeeName.length, strict)
 
-        # Fail if the transaction reference is too long
-        # TODO: maybe add an option to truncate
-        if len(txn_reference) > LodgmentRef.length:
-            raise ValidationError(
-                "Transaction reference is too long: {}, length is {}, max length is {}".format(
-                    repr(txn_reference), len(txn_reference), LodgmentRef.length
-                )
-            )
+        txn_reference = check_field(
+            "Transaction reference", txn_reference, LodgmentRef.length, strict
+        )
 
         rec = aba.records.DetailRecord(
             bsb=bsb,

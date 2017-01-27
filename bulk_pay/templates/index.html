@@ -46,6 +46,11 @@
       <input type="file" name="csv_file">
     </div>
 
+    <div class="pure-control-group">
+      <label for="strict_mode">Strict mode</label>
+      <input type="checkbox" name="strict_mode" checked>
+    </div>
+
     <div class="pure-controls">
       <button type="submit" class="pure-button pure-button-primary">Convert</button>
     </div>
@@ -71,7 +76,10 @@ To work with this tool, your CSV file needs 5 columns:</p>
   <li>Transaction reference - some text that the recipient will see</li>
 </ol>
 <p>You also have to watch out for length limits, the transaction reference can be
-<b>at most 18 characters</b> and the recipient name can be <b>at most 12 characters</b>.
+<b>at most 18 characters</b> and the recipient name can be <b>at most 32 characters</b>.
+<p>When <em>strict mode</em> is enabled, the converter will fail if any field is too long,
+and you will be shown an error page with the field that needs to be shortened. If instead you would
+like to just truncate long fields to the length limit, you should turn off strict mode.</p>
 Download an example CSV file below to get started!</p>
 <a class="pure-button" href="static/example.csv">Download Example CSV</a>
 <h2>Source Code, Bugs, Credits, etc</h2>
