@@ -2,7 +2,7 @@ import csv
 import aba.records
 from datetime import datetime
 from aba.generator import AbaFile
-from aba.fields import RemitterName, PayeeName, LodgmentRef
+from aba.fields import RemitterName, PayeeName, LodgmentRef, UserNumber
 
 class ValidationError(Exception):
     def __init__(self, message):
@@ -34,11 +34,12 @@ def check_field(field_name, field_value, length_limit, strict):
 
 # headers: bsb, account number, name, amount in cents, comment
 def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender_bank,
-                       batch_description="", strict=True):
+                       batch_description="", acpa_number="0", strict=True):
     reader = csv.reader(csv_data)
     records = []
 
     sender_name = check_field("Sender name", sender_name, RemitterName.length, strict)
+    acpa_number = check_field("ACPA number", acpa_number, UserNumber.length, strict)
 
     for row in reader:
         if len(row) != 5:
@@ -74,7 +75,7 @@ def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender
     header = aba.records.DescriptiveRecord(
         user_bank=sender_bank,
         user_name=sender_name,
-        user_number=0, # No ACPA number
+        user_number=acpa_number,
         description=batch_description,
         date=datetime.now().date()
     )

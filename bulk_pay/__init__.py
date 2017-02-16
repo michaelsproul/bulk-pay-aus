@@ -1,7 +1,7 @@
 import os
 import io
 import flask
-from aba.fields import AccountNumber, BSB, Description, RemitterName, UserBank
+from aba.fields import AccountNumber, BSB, Description, RemitterName, UserBank, UserNumber
 from flask import Flask, request, redirect, url_for, Response, render_template
 
 from .csv_parse import convert_csv_to_aba, ValidationError
@@ -18,6 +18,7 @@ class LengthLimits:
     account_num = AccountNumber.length
     bsb = BSB.length
     bank_code = UserBank.length
+    acpa_number = UserNumber.length
     description = Description.length
 
 def error(message):
@@ -40,9 +41,10 @@ def csv_to_aba():
         try:
             fields = get_form_fields(request, [
                     "sender_name", "sender_account", "sender_bsb", "sender_bank",
-                    "batch_description"
+                    "acpa_number", "batch_description"
             ])
-            [sender_name, sender_account, sender_bsb, sender_bank, batch_description] = fields
+            [sender_name, sender_account, sender_bsb, sender_bank,
+             acpa_number, batch_description] = fields
         except MissingFields as ex:
             return error(ex.message)
 
@@ -57,6 +59,7 @@ def csv_to_aba():
                 csv_stream,
                 sender_name=sender_name, sender_account=sender_account,
                 sender_bsb=sender_bsb, sender_bank=sender_bank,
+                acpa_number=acpa_number,
                 batch_description=batch_description, strict=strict_mode
             )
         except ValidationError as ex:
