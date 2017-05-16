@@ -6,6 +6,7 @@ from flask import Flask, request, redirect, url_for, Response, render_template
 
 from .csv_parse import convert_csv_to_aba, ValidationError
 from .util import MissingFields, get_form_fields
+from .encoding import decode_file
 
 app = Flask(__name__)
 # app.debug = True
@@ -52,7 +53,7 @@ def csv_to_aba():
         strict_mode = True if request.form.get("strict_mode") == "on" else False
 
         # Convert uploaded byte-stream to a Python string (not very efficient, but hey).
-        csv_stream = io.StringIO(csv_file.read().decode("utf-8-sig"))
+        csv_stream = io.StringIO(decode_file(csv_file.read()))
 
         try:
             result = convert_csv_to_aba(

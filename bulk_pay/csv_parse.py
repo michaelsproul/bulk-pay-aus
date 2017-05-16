@@ -42,6 +42,9 @@ def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender
     acpa_number = check_field("ACPA number", acpa_number, UserNumber.length, strict)
 
     for row in reader:
+        if len(row) == 0:
+            print("Skipping empty row in CSV")
+            continue
         if len(row) != 5:
             raise ValidationError("Wrong number of columns in row: {}, expected 5".format(row))
         [bsb, account_num, name, amount, txn_reference] = row

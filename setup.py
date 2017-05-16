@@ -8,7 +8,7 @@ config = {
     'author': 'Michael Sproul',
     'url': 'https://sproul.xyz',
     'version': '0.1',
-    'install_requires': ['aba', 'Flask'],
+    'install_requires': ['aba', 'Flask', 'chardet', 'unidecode'],
     'packages': ['bulkpay'],
     'name': 'bulkpay'
 }
