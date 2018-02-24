@@ -61,7 +61,8 @@ def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender
         rec = aba.records.DetailRecord(
             bsb=bsb,
             account_number=account_num,
-            txn_code='53', # some magic number
+            # Transaction code 50 = general credit
+            txn_code='50',
             amount=amount,
             payee_name=name,
             lodgment_ref=txn_reference,
