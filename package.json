@@ -1,0 +1,14 @@
+{
+  "name": "bulk_pay",
+  "version": "1.0.0",
+  "main": "bulk_pay/js/index.js",
+  "repository": "git@github.com:michaelsproul/bulk-pay-aus.git",
+  "author": "Michael Sproul <micsproul@gmail.com>",
+  "private": true,
+  "license": "GPL-3.0+",
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "papaparse": "^4.3.7",
+    "path": "^0.12.7"
+  }
+}

@@ -3,14 +3,30 @@
 <head>
   <meta charset="utf-8">
   <title>CSV to ABA</title>
+  <script src="static/bulk_pay.bundle.js"></script>
   <link rel="stylesheet" type="text/css" href="static/style.css">
   <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
 </head>
 <body>
 <h1 id="title">Convert CSV to ABA</h1>
 <div id="content">
+<div id="prefiller">
+  <summary>Optional: upload account details to prefill</summary>
+  <details>
+    <div class="pure-control-group">
+      <label for="prefill_csv">Prefill CSV</label>
+      <input type="file" name="prefill_csv" onchange="handlePrefillFile(this.files)">
+    </div>
+    <div class="pure-control-group">
+      <label for="account-selector">Select account</label>
+      <select id="account-selector" onchange="handleAccountSelect(this)">
+        <option value="-1">None</option>
+      </select>
+    </div>
+  </details>
+</div>
 <div id="converter" style="display: block; width: 475px; margin-left: auto; margin-right: auto">
-<form method="post" enctype="multipart/form-data" class="pure-form pure-form-aligned">
+<form id="main-form" method="post" enctype="multipart/form-data" class="pure-form pure-form-aligned">
   <fieldset>
     <div class="pure-control-group">
       <label for="sender_name">Your Name</label>
