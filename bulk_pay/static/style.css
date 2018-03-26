@@ -12,3 +12,16 @@ body {
     margin-left: auto;
     margin-right: auto;
 }
+
+#prefiller {
+    background-color: #fafafa;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+#prefiller summary {
+    display: list-item;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

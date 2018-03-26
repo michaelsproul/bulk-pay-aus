@@ -10,22 +10,31 @@
 <body>
 <h1 id="title">Convert CSV to ABA</h1>
 <div id="content">
-<div id="prefiller">
-  <summary>Optional: upload account details to prefill</summary>
+<div id="prefiller" class="pure-form pure-form-aligned">
   <details>
-    <div class="pure-control-group">
-      <label for="prefill_csv">Prefill CSV</label>
-      <input type="file" name="prefill_csv" onchange="handlePrefillFile(this.files)">
-    </div>
-    <div class="pure-control-group">
-      <label for="account-selector">Select account</label>
-      <select id="account-selector" onchange="handleAccountSelect(this)">
-        <option value="-1">None</option>
-      </select>
-    </div>
+  <summary>Optional: add prefill details</summary>
+  <div class="pure-control-group">
+    <label for="prefill_csv">Prefill CSV</label>
+    <input type="file" name="prefill_csv" onchange="handlePrefillFile(this.files)">
+  </div>
+  <div class="pure-control-group">
+    <label for="account-selector">Select account</label>
+    <select id="account-selector" onchange="handleAccountSelect(this)">
+      <option value="-1">None</option>
+    </select>
+  </div>
+  <h4>How do I use prefill?</h4>
+  <p>The (optional) prefill functionality allows you to save time by filling out the fields below
+  using information about <i>your</i> account from a spreadsheet. Simply download an example prefill CSV
+  file from <a href="static/prefill-example.csv">here</a> and fill in your account details.
+  It's OK to leave fields blank if you would prefer to fill them in manually.
+  Once you're happy with the file, upload it using the button above. Then,
+  select one of the accounts and the prefiller will enter all the details of that
+  account into the fields below.
   </details>
 </div>
-<div id="converter" style="display: block; width: 475px; margin-left: auto; margin-right: auto">
+<br>
+<div id="converter">
 <form id="main-form" method="post" enctype="multipart/form-data" class="pure-form pure-form-aligned">
   <fieldset>
     <div class="pure-control-group">
