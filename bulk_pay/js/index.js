@@ -3,10 +3,10 @@ import $ from 'jquery';
 
 const csv_headers = ["name", "acct", "bsb", "bankcode", "acpa", "description"];
 
-const empty_account = {name: "", acct: "", bsb: "", bankcode: "", acpa: "", description: ""}
+const empty_account = {name: "", acct: "", bsb: "", bankcode: "", acpa: "", description: ""};
 
-function rowOk(row) {
-    return csv_headers.every((header) => row.hasOwnProperty(header));
+function missingColumns(header) {
+    return csv_headers.filter((h) => !header.includes(h));
 }
 
 function handlePrefillFile(files) {
@@ -14,18 +14,18 @@ function handlePrefillFile(files) {
         header: true,
         skipEmptyLines: true,
         complete: function(results, file) {
+            let missingCols = missingColumns(results.meta.fields);
+            if (missingCols.length > 0) {
+                alert(`Sorry, your prefill CSV is missing the following columns: ${missingCols}`);
+                return;
+            }
+
             let select = document.getElementById("account-selector");
             select.options.length = 1;
             select.accountData = results.data;
 
             results.data.forEach((row, idx) => {
                 console.log(row);
-
-                if (!rowOk(row)) {
-                    // FIXME: error message
-                    alert(`Row ${idx} is invalid`);
-                    return;
-                }
 
                 // Add to the select
                 let option = document.createElement("option");
@@ -52,12 +52,20 @@ function prefillForm(account) {
     let setField = (fieldName, value) => {
         form.find(`input[name=${fieldName}]`)[0].value = value;
     };
-    setField("sender_name", account.name);
-    setField("sender_account", account.acct);
-    setField("sender_bsb", account.bsb);
-    setField("sender_bank", account.bankcode);
-    setField("acpa_number", account.acpa);
-    setField("batch_description", account.description);
+    // Mapping from HTML field names to account property names
+    let fieldMappings = [
+        ["sender_name", "name"],
+        ["sender_account", "acct"],
+        ["sender_bsb", "bsb"],
+        ["sender_bank", "bankcode"],
+        ["acpa_number", "acpa"],
+        ["batch_description", "description"]
+    ];
+    for (let m of fieldMappings) {
+        let htmlField = m[0], propName = m[1];
+        let value = account.hasOwnProperty(propName) ? account[propName] : "";
+        setField(htmlField, value);
+    }
 }
 
 // Populate the account selector if the user has an accounts file already loaded
