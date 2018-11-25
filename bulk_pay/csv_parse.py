@@ -43,13 +43,10 @@ def convert_csv_to_aba(csv_data, sender_name, sender_account, sender_bsb, sender
 
     for row in reader:
         if len(row) == 0:
-            print("Skipping empty row in CSV")
             continue
         if len(row) != 5:
             raise ValidationError("Wrong number of columns in row: {}, expected 5".format(row))
         [bsb, account_num, name, amount, txn_reference] = row
-
-        print("Processing {}".format(row))
 
         # Check/truncate the recipient name
         name = check_field("Recipient name", name, PayeeName.length, strict)
