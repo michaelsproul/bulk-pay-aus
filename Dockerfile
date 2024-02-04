@@ -1,12 +1,11 @@
-FROM python:3.5
+FROM python:3.11
 
-RUN pip3 install pip==18 \
-    && pip3 install gunicorn
+RUN pip3 install gunicorn
 
 RUN mkdir /app
 WORKDIR  /app
 COPY . .
 
-RUN pip3 install --upgrade --process-dependency-links .
+RUN pip3 install .
 
-CMD gunicorn --bind 0.0.0.0:8000 bulk_pay:app
+CMD exec gunicorn --bind 0.0.0.0:8000 bulk_pay:app
